@@ -1,0 +1,54 @@
+{
+  "name": "goma-1015",
+  "version": "1.0.0",
+  "description": "goma-1015 implementation by using fast-check",
+  "main": "dist/lib/index.js",
+  "scripts": {
+    "fix": "run-p fix:*",
+    "fix:eslint": "npm run lint:eslint -- --fix",
+    "fix:prettier": "npm run lint:prettier -- --write",
+    "lint": "run-p lint:*",
+    "lint:eslint": "eslint --ext js,ts .",
+    "lint:prettier": "prettier -l \"**/*.{json,md,yml}\"",
+    "lint:type": "tsc --noEmit",
+    "test": "run-s lint test:*",
+    "test:unit": "jest"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freddiefujiwara/goma-1015.git"
+  },
+  "keywords": [],
+  "author": "Fumikazu Fujiwara <github@ze.gs> (http://freddiefujiwara.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/freddiefujiwara/goma-1015/issues"
+  },
+  "homepage": "https://github.com/freddiefujiwara/goma-1015#readme",
+  "engines": {
+    "node": ">= 8"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.2",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-prettier": "3.1.2",
+    "eslint-plugin-simple-import-sort": "5.0.2",
+    "husky": "4.2.3",
+    "jest": "^25.1.0",
+    "lint-staged": "10.0.8",
+    "npm-run-all": "4.1.5",
+    "prettier": "1.19.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "25.2.1",
+    "tslib": "1.11.1",
+    "typescript": "^3.8.3"
+  }
+}
