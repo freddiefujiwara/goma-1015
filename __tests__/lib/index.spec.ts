@@ -67,32 +67,32 @@ describe('Goma1015', () => {
       }),
     )
   })
-  it('can pour', () => {
+  it('can dispense', () => {
     let g = new Goma1015()
     //check definition
-    expect(g.pour).toBeDefined()
+    expect(g.dispense).toBeDefined()
     expect(g.plugIn).toBeDefined()
     expect(g.plugOff).toBeDefined()
 
     //deault plugOff
-    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
-    //pouring needs to be pot closed
+    expect(() => g.dispense(15)).toThrowError(/plug should be connected/)
+    //dispenseing needs to be pot closed
     g.open()
     g.plugIn()
-    expect(() => g.pour(15)).toThrowError(/is open/)
+    expect(() => g.dispense(15)).toThrowError(/is open/)
     g.close()
 
     //plugOff
     g.plugOff()
-    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
+    expect(() => g.dispense(15)).toThrowError(/plug should be connected/)
     g.plugIn()
 
     //negative sec
-    expect(() => g.pour(-1)).toThrowError(/can't be poured with negative sec/)
-    //can not pour water anymore if empty
-    expect(g.pour(100)).toBe(0)
+    expect(() => g.dispense(-1)).toThrowError(/can't be dispensed with negative sec/)
+    //can not dispense water anymore if empty
+    expect(g.dispense(100)).toBe(0)
 
-    //property based testing for pour
+    //property based testing for dispense
     g = new Goma1015()
     //fill to full
     let water = 1000
@@ -104,9 +104,9 @@ describe('Goma1015', () => {
     fc.assert(
       fc.property(fc.nat(10), fc.nat(1000), (s, w) => {
         //refill if empty
-        //* water is poured 10 ml/sec
+        //* water is dispenseed 10 ml/sec
         if (sec >= water / 10) {
-          expect(g.pour(s)).toBe(0)
+          expect(g.dispense(s)).toBe(0)
           sec = 0
           water = w
           g.open()
@@ -115,8 +115,8 @@ describe('Goma1015', () => {
           return
         }
         //not empty
-        //water pouring should be 0 if s equals 0
-        expect(g.pour(s) == 0).toBe(s == 0)
+        //water dispenseing should be 0 if s equals 0
+        expect(g.dispense(s) == 0).toBe(s == 0)
         sec += s
       }),
     )
