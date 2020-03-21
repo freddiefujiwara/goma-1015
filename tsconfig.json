@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "outDir": "dist"
+    "outDir": "dist/lib"
   },
   "include": ["src"],
   "exclude": ["**/*.spec.ts"]
