@@ -1,6 +1,6 @@
 import fc from 'fast-check'
 
-import Goma1015 from '../../src/lib/index'
+import { Goma1015, State } from '../../src/lib/index'
 
 describe('Goma1015', () => {
   it('can create new instance', () => {

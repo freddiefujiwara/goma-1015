@@ -1,4 +1,12 @@
-class Goma1015 {
+export enum State {
+  OFF = -1,
+  IDLE,
+  BOIL,
+  KEEP,
+  DISCARD,
+}
+
+export class Goma1015 {
   private _isOpen: boolean
   private _connected: boolean
   private _water: number
@@ -63,4 +71,3 @@ class Goma1015 {
     }
   }
 }
-export default Goma1015
