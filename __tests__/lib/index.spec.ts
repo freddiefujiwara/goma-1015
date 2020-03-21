@@ -18,7 +18,7 @@ describe('Goma1015', () => {
     //default is close
     expect(g.isOpen()).toBe(false)
 
-    //Property based testing for open/close
+    //property based testing for open/close
     fc.assert(
       fc.property(fc.boolean(), b => {
         if (b) {
@@ -45,12 +45,13 @@ describe('Goma1015', () => {
     expect(() => g.fill(-1)).toThrowError(/can't be filled with negative number/)
     expect(g.full()).toBe(false)
 
-    //full can be filled
+    //if full can not be filled water anymore
+    //fill is 1,000 ml
     g.fill(1000)
     expect(g.full()).toBe(true)
     expect(() => g.fill(1)).toThrowError(/is full/)
 
-    //Property based testing for fill
+    //property based testing for fill
     g = new Goma1015()
     g.open()
     let water = 0
@@ -78,26 +79,34 @@ describe('Goma1015', () => {
 
     //negative sec
     expect(() => g.pour(-1)).toThrowError(/can't be poured with negative sec/)
+    //can not pour water anymore if empty
     expect(g.pour(100)).toBe(0)
 
-    //Property based testing for pour
+    //property based testing for pour
     g = new Goma1015()
     //fill to full
+    let water = 1000
     g.open()
-    g.fill(1000)
+    g.fill(water)
     g.close()
     let sec = 0
     fc.assert(
-      fc.property(fc.nat(10), s => {
-        //empty or 0 sec
-        if (sec >= 100 || s == 0) {
+      fc.property(fc.nat(10), fc.nat(1000), (s, w) => {
+        //refill if empty
+        //* water is poured 10 ml/sec
+        if (sec >= water / 10) {
           expect(g.pour(s)).toBe(0)
+          sec = 0
+          water = w
+          g.open()
+          g.fill(water)
+          g.close()
           return
         }
         //not empty
-        expect(g.pour(s)).not.toBe(0)
+        //s equals 0 pour should be 0
+        expect(g.pour(s) == 0).toBe(s == 0)
         sec += s
-        expect(g.full()).toBe(sec == 0)
       }),
     )
   })
