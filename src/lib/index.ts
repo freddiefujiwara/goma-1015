@@ -1,9 +1,10 @@
 export enum State {
   OFF = -1,
-  IDLE,
-  BOIL,
-  KEEP,
-  DISCARD,
+  OFF_OPEN,
+  ON_IDLE,
+  ON_OPEN,
+  ON_ACTIVE_BOIL,
+  ON_ACTIVE_KEEP,
 }
 
 export class Goma1015 {
