@@ -71,11 +71,21 @@ describe('Goma1015', () => {
     let g = new Goma1015()
     //check definition
     expect(g.pour).toBeDefined()
+    expect(g.plugIn).toBeDefined()
+    expect(g.plugOff).toBeDefined()
 
+    //deault plugOff
+    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
     //pouring needs to be pot closed
     g.open()
+    g.plugIn()
     expect(() => g.pour(15)).toThrowError(/is open/)
     g.close()
+
+    //plugOff
+    g.plugOff()
+    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
+    g.plugIn()
 
     //negative sec
     expect(() => g.pour(-1)).toThrowError(/can't be poured with negative sec/)
@@ -86,6 +96,7 @@ describe('Goma1015', () => {
     g = new Goma1015()
     //fill to full
     let water = 1000
+    g.plugIn()
     g.open()
     g.fill(water)
     g.close()

@@ -1,8 +1,10 @@
 class Goma1015 {
   private _isOpen: boolean
+  private _connected: boolean
   private _water: number
   constructor() {
     this._isOpen = false
+    this._connected = false
     this._water = 0
   }
   open(): void {
@@ -10,6 +12,12 @@ class Goma1015 {
   }
   close(): void {
     this._isOpen = false
+  }
+  plugIn(): void {
+    this._connected = true
+  }
+  plugOff(): void {
+    this._connected = false
   }
   isOpen(): boolean {
     return this._isOpen
@@ -32,6 +40,9 @@ class Goma1015 {
     }
     if (this._isOpen) {
       throw new Error(`${this} is open`)
+    }
+    if (!this._connected) {
+      throw new Error(`${this} plug should be connected`)
     }
     const water = this._water
     this._water -= 10 * sec
