@@ -121,22 +121,22 @@ describe('Goma1015', () => {
       }),
     )
   })
-  it('can boil', () => {
+  it('can reboil', () => {
     const g = new Goma1015()
     //check definition
-    expect(g.boil).toBeDefined()
+    expect(g.reboil).toBeDefined()
 
     //deault plugOff
-    expect(() => g.boil()).toThrowError(/plug should be connected/)
-    //boiling needs to be pot closed
+    expect(() => g.reboil()).toThrowError(/plug should be connected/)
+    //reboiling needs to be pot closed
     g.open()
     g.plugIn()
-    expect(() => g.boil()).toThrowError(/is open/)
+    expect(() => g.reboil()).toThrowError(/is open/)
     g.close()
 
     //plugOff
     g.plugOff()
-    expect(() => g.boil()).toThrowError(/plug should be connected/)
+    expect(() => g.reboil()).toThrowError(/plug should be connected/)
     g.plugIn()
   })
 })

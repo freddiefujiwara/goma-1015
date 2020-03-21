@@ -54,7 +54,7 @@ class Goma1015 {
     }
     return water - this._water
   }
-  boil(): void {
+  reboil(): void {
     if (this._isOpen) {
       throw new Error(`${this} is open`)
     }
