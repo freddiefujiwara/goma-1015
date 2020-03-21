@@ -33,6 +33,7 @@ on {
     keep => idle    [color="black"]  : "_water<10";
 };
 
+# _water = 0
 initial => off;
 
 # _water += water

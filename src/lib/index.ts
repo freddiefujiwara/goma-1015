@@ -9,11 +9,11 @@ export enum State {
 
 export class Goma1015 {
   private _isOpen: boolean
-  private _connected: boolean
+  private _on: boolean
   private _water: number
   constructor() {
     this._isOpen = false
-    this._connected = false
+    this._on = false
     this._water = 0
   }
   open(): void {
@@ -23,10 +23,10 @@ export class Goma1015 {
     this._isOpen = false
   }
   plugIn(): void {
-    this._connected = true
+    this._on = true
   }
   plugOff(): void {
-    this._connected = false
+    this._on = false
   }
   isOpen(): boolean {
     return this._isOpen
@@ -53,8 +53,8 @@ export class Goma1015 {
     if (this._isOpen) {
       throw new Error(`${this} is open`)
     }
-    if (!this._connected) {
-      throw new Error(`${this} plug should be connected`)
+    if (!this._on) {
+      throw new Error(`${this} plug should be on`)
     }
     const water = this._water
     this._water -= 10 * sec
@@ -67,8 +67,8 @@ export class Goma1015 {
     if (this._isOpen) {
       throw new Error(`${this} is open`)
     }
-    if (!this._connected) {
-      throw new Error(`${this} plug should be connected`)
+    if (!this._on) {
+      throw new Error(`${this} plug should be on`)
     }
   }
 }
