@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "goma-1015 implementation by using fast-check",
   "main": "dist/lib/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "scripts": {
     "fix": "run-p fix:*",
     "fix:eslint": "npm run lint:eslint -- --fix",
@@ -12,7 +14,11 @@
     "lint:prettier": "prettier -l \"**/*.{json,md,yml}\"",
     "lint:type": "tsc --noEmit",
     "test": "run-s lint test:*",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "prebuild": "rimraf dist",
+    "build": "run-p build:*",
+    "build:common": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json"
   },
   "files": [
     "dist"
@@ -41,6 +47,7 @@
     "eslint-plugin-import": "2.20.1",
     "eslint-plugin-prettier": "3.1.2",
     "eslint-plugin-simple-import-sort": "5.0.2",
+    "fast-check": "1.23.0",
     "husky": "4.2.3",
     "jest": "^25.1.0",
     "lint-staged": "10.0.8",
