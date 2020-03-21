@@ -34,6 +34,9 @@ class Goma1015 {
     }
     this._water += water
   }
+  full(): boolean {
+    return this._water >= 1000
+  }
   pour(sec: number): number {
     if (sec < 0) {
       throw new Error(`${this} can't be poured with negative sec`)
@@ -51,8 +54,13 @@ class Goma1015 {
     }
     return water - this._water
   }
-  full(): boolean {
-    return this._water >= 1000
+  boil(): void {
+    if (this._isOpen) {
+      throw new Error(`${this} is open`)
+    }
+    if (!this._connected) {
+      throw new Error(`${this} plug should be connected`)
+    }
   }
 }
 export default Goma1015

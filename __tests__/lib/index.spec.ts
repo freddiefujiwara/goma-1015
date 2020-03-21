@@ -46,7 +46,7 @@ describe('Goma1015', () => {
     expect(g.full()).toBe(false)
 
     //if full can not be filled water anymore
-    //fill is 1,000 ml
+    //fill water 1,000 ml
     g.fill(1000)
     expect(g.full()).toBe(true)
     expect(() => g.fill(1)).toThrowError(/is full/)
@@ -115,10 +115,28 @@ describe('Goma1015', () => {
           return
         }
         //not empty
-        //s equals 0 pour should be 0
+        //water pouring should be 0 if s equals 0
         expect(g.pour(s) == 0).toBe(s == 0)
         sec += s
       }),
     )
+  })
+  it('can boil', () => {
+    const g = new Goma1015()
+    //check definition
+    expect(g.boil).toBeDefined()
+
+    //deault plugOff
+    expect(() => g.boil()).toThrowError(/plug should be connected/)
+    //boiling needs to be pot closed
+    g.open()
+    g.plugIn()
+    expect(() => g.boil()).toThrowError(/is open/)
+    g.close()
+
+    //plugOff
+    g.plugOff()
+    expect(() => g.boil()).toThrowError(/plug should be connected/)
+    g.plugIn()
   })
 })
