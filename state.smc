@@ -1,0 +1,29 @@
+initial,
+off,
+open/off,
+on {
+    idle, 
+    open/on;
+
+    # _water = _water - sec * 10
+    idle => idle    [color="blue"]  : dispense(sec:number);
+    idle => open/on [color="red"]   : open();
+    idle => off     [color="gray"]  : plugOff();
+
+    # _water += water
+    open/on => open/on  [color="darkgreen"] : fill(water:number) ;
+    open/on => idle     [color="purple"]    : close();
+    open/on => open/off [color="gray"]      : plugOff();
+
+};
+
+# _water = 0
+initial => off;
+
+# _water += water
+open/off  => open/off [color="darkgreen"] : fill(water:number);
+open/off  => off      [color="purple"]    : close();
+open/off  => open/on  [color="pink"]      : plugIn();
+
+off  => open/off [color="red"]  : open();
+off  => idle     [color="pink"] : plugIn();
