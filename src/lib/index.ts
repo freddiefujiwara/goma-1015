@@ -123,11 +123,8 @@ export class Goma1015 {
     if (sec < 0) {
       throw new Error(`${JSON.stringify(this)} can't be dispensed with negative sec`)
     }
-    if (this._state === State.OFF_OPEN || this._state === State.ON_OPEN) {
-      throw new Error(`${JSON.stringify(this)} is open`)
-    }
     if (!(this._state === State.ON_IDLE || this._state === State.ON_ACTIVE_KEEP)) {
-      throw new Error(`${JSON.stringify(this)} plug should be inserted`)
+      throw new Error(`${JSON.stringify(this)} should be IDLE or KEEP`)
     }
     const water = this._water
     this._water -= 10 * sec

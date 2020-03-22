@@ -79,18 +79,18 @@ describe('Goma1015', () => {
     expect(g.plugOff).toBeDefined()
 
     //deault plugOff
-    expect(() => g.dispense(15)).toThrowError(/plug should be inserted/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     //dispenseing needs to be pot closed
     g.open()
     g.plugIn()
     g.plugIn()
-    expect(() => g.dispense(15)).toThrowError(/is open/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.close()
 
     //plugOff
     g.plugOff()
     g.plugOff()
-    expect(() => g.dispense(15)).toThrowError(/plug should be inserted/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.plugIn()
 
     //negative sec
