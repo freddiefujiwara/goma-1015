@@ -77,7 +77,7 @@ export class Goma1015 {
   state(): number {
     switch (this._state) {
       case State.ON_ACTIVE_BOIL:
-        this._temperature += ((Date.now() - this._start) / 1000) * 1.25
+        this._temperature = 25 + ((Date.now() - this._start) / 1000) * 1.25
         if (this._temperature >= 100) {
           this._temperature = 100
           this._state = State.ON_ACTIVE_KEEP
@@ -138,6 +138,7 @@ export class Goma1015 {
     if (this._state !== State.ON_ACTIVE_KEEP) {
       throw new Error(`${JSON.stringify(this)} should be KEEP`)
     }
+    this._start = Date.now()
     this._state = State.ON_ACTIVE_BOIL
   }
 }

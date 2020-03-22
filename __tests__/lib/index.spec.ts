@@ -159,5 +159,69 @@ describe('Goma1015', () => {
   it('can reboil', () => {
     const g = new Goma1015()
     expect(g.reboil).toBeDefined()
+    //OFF
+    expect(g.state()).toBe(State.OFF)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.open()
+    //OFF_OPEN
+    expect(g.state()).toBe(State.OFF_OPEN)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.plugIn()
+    //ON_OPEN
+    expect(g.state()).toBe(State.ON_OPEN)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.fill(9)
+    g.close()
+    //ON_IDLE
+    expect(g.state()).toBe(State.ON_IDLE)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.plugOff()
+    //OFF
+    expect(g.state()).toBe(State.OFF)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.open()
+    //OFF_OPEN
+    expect(g.state()).toBe(State.OFF_OPEN)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.fill(1)
+    g.close()
+    g.plugIn()
+    //ON_ACTIVE_BOIL
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.water()).toBe(10)
+    expect(g.temperature() >= 25).toBe(true)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    advanceBy(58000)
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.water()).toBe(10)
+    expect(g.temperature() < 100).toBe(true)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    advanceBy(2000)
+    expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
+    expect(g.water()).toBe(10)
+    expect(g.temperature()).toBe(100)
+    g.reboil()
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.temperature() < 100).toBe(true)
   })
 })
