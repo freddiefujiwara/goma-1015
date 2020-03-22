@@ -2,6 +2,8 @@ import fc from 'fast-check'
 import { advanceBy, clear } from 'jest-date-mock'
 
 import { Goma1015, State } from '../../src/lib/index'
+//import { Goma1015Model }    from '../../model_based/Goma1015Model';
+//import { Goma1015Commands } from '../../model_based/Goma1015Commands';
 
 describe('Goma1015', () => {
   it('can create new instance', () => {
@@ -224,4 +226,14 @@ describe('Goma1015', () => {
     expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
     expect(g.temperature() < 100).toBe(true)
   })
+  /*
+  it('should detect potential issues with the Goma1015', () =>
+    fc.assert(
+      fc.property(Goma1015Commands, commands => {
+        const real = new Goma1015()
+        const model = new Goma1015Model()
+        fc.modelRun(() => ({ model, real }), commands)
+      }),
+    ))
+   */
 })
