@@ -61,12 +61,14 @@ describe('Goma1015', () => {
     let water = 0
     fc.assert(
       fc.property(fc.nat(1000), w => {
+        // to be full
         if (water + w > 1000) {
           expect(() => g.fill(w)).toThrowError(/is full/)
           return
         }
         g.fill(w)
         water += w
+        // confirm water volume
         expect(g.water()).toBe(water)
       }),
     )
@@ -87,7 +89,7 @@ describe('Goma1015', () => {
     expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.close()
 
-    //plugOff
+    //dispenseing needs to be pot plugged
     g.plugOff()
     g.plugOff()
     expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
@@ -108,39 +110,54 @@ describe('Goma1015', () => {
     g.close()
     fc.assert(
       fc.property(fc.nat(10), fc.nat(1000), (s, w) => {
-        //refill if Sate.ON_IDLE
-        //* water is dispenseed 10 ml/sec
         water = g.water()
+        // if it doens't have enough water to be IDLE
         if (water < 10) {
           expect(g.state()).toBe(State.ON_IDLE)
+          //water is dispenseed 10 ml/sec
+          //means - 10ml
           expect(g.dispense(1)).toBe(water)
+          //refill
           g.open()
           g.fill(w)
           g.close()
           return
         }
-        //not empty
-        //water dispenseing should be 0 if s equals 0
+        //it is active
         if (g.state() === State.ON_ACTIVE_BOIL) {
+          //after 1 sec the temp should be 25 > and < 100
           advanceBy(1000)
           expect(g.temperature() > 25).toBe(true)
           expect(g.temperature() < 100).toBe(true)
+          //temp should be 100 after 60000 sec passed
           advanceBy(59000)
           expect(g.temperature() == 100).toBe(true)
+          //temp should be 100 after 60001 sec passed
           advanceBy(1)
           expect(g.temperature() == 100).toBe(true)
         }
+        //it should be KEEP
         expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
         if (s > 0) {
           expect(g.dispense(s)).not.toBe(0)
         }
       }),
     )
+    //clear Date.now()
     clear()
   })
   it('can get temperature', () => {
     const g = new Goma1015()
     expect(g.temperature).toBeDefined()
     expect(g.temperature()).toBe(25)
+  })
+  it('can get water', () => {
+    const g = new Goma1015()
+    expect(g.water).toBeDefined()
+    expect(g.water()).toBe(0)
+  })
+  it('can reboil', () => {
+    const g = new Goma1015()
+    expect(g.reboil).toBeDefined()
   })
 })

@@ -134,4 +134,10 @@ export class Goma1015 {
     this.state()
     return water - this._water
   }
+  reboil(): void {
+    if (this._state !== State.ON_ACTIVE_KEEP) {
+      throw new Error(`${JSON.stringify(this)} should be KEEP`)
+    }
+    this._state = State.ON_ACTIVE_BOIL
+  }
 }
