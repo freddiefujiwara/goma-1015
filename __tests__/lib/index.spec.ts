@@ -1,6 +1,7 @@
 import fc from 'fast-check'
+import { advanceBy, clear } from 'jest-date-mock'
 
-import Goma1015 from '../../src/lib/index'
+import { Goma1015, State } from '../../src/lib/index'
 
 describe('Goma1015', () => {
   it('can create new instance', () => {
@@ -13,21 +14,21 @@ describe('Goma1015', () => {
     //check definition
     expect(g.open).toBeDefined()
     expect(g.close).toBeDefined()
-    expect(g.isOpen).toBeDefined()
+    expect(g.state).toBeDefined()
 
     //default is close
-    expect(g.isOpen()).toBe(false)
+    expect(g.state() === State.OFF).toBe(true)
 
     //property based testing for open/close
     fc.assert(
       fc.property(fc.boolean(), b => {
         if (b) {
           g.open()
-          expect(g.isOpen()).toBe(true)
+          expect(g.state() === State.OFF_OPEN).toBe(true)
           return
         }
         g.close()
-        expect(g.isOpen()).toBe(false)
+        expect(g.state() === State.OFF).toBe(true)
       }),
     )
   })
@@ -35,64 +36,71 @@ describe('Goma1015', () => {
     let g = new Goma1015()
     //check definition
     expect(g.fill).toBeDefined()
-    expect(g.full).toBeDefined()
+    expect(g.water).toBeDefined()
 
     //filling needs to be pot opened
     expect(() => g.fill(15)).toThrowError(/is not open/)
+    expect(g.water()).toBe(0)
 
     //negative water
     g.open()
     expect(() => g.fill(-1)).toThrowError(/can't be filled with negative number/)
-    expect(g.full()).toBe(false)
+    expect(g.water()).toBe(0)
 
     //if full can not be filled water anymore
-    //fill is 1,000 ml
+    //fill water 1,000 ml
     g.fill(1000)
-    expect(g.full()).toBe(true)
+    expect(g.water()).toBe(1000)
     expect(() => g.fill(1)).toThrowError(/is full/)
 
     //property based testing for fill
     g = new Goma1015()
     g.open()
+    g.plugIn()
+    g.plugOff()
     let water = 0
     fc.assert(
       fc.property(fc.nat(1000), w => {
+        // to be full
         if (water + w > 1000) {
           expect(() => g.fill(w)).toThrowError(/is full/)
           return
         }
         g.fill(w)
         water += w
-        expect(g.full()).toBe(1000 == water)
+        // confirm water volume
+        expect(g.water()).toBe(water)
       }),
     )
   })
-  it('can pour', () => {
+  it('can dispense', () => {
     let g = new Goma1015()
     //check definition
-    expect(g.pour).toBeDefined()
+    expect(g.dispense).toBeDefined()
     expect(g.plugIn).toBeDefined()
     expect(g.plugOff).toBeDefined()
 
     //deault plugOff
-    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
-    //pouring needs to be pot closed
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
+    //dispenseing needs to be pot closed
     g.open()
     g.plugIn()
-    expect(() => g.pour(15)).toThrowError(/is open/)
+    g.plugIn()
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.close()
 
-    //plugOff
+    //dispenseing needs to be pot plugged
     g.plugOff()
-    expect(() => g.pour(15)).toThrowError(/plug should be connected/)
+    g.plugOff()
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.plugIn()
 
     //negative sec
-    expect(() => g.pour(-1)).toThrowError(/can't be poured with negative sec/)
-    //can not pour water anymore if empty
-    expect(g.pour(100)).toBe(0)
+    expect(() => g.dispense(-1)).toThrowError(/can't be dispensed with negative sec/)
+    //can not dispense water anymore if empty
+    expect(g.dispense(100)).toBe(0)
 
-    //property based testing for pour
+    //property based testing for dispense
     g = new Goma1015()
     //fill to full
     let water = 1000
@@ -100,25 +108,120 @@ describe('Goma1015', () => {
     g.open()
     g.fill(water)
     g.close()
-    let sec = 0
     fc.assert(
       fc.property(fc.nat(10), fc.nat(1000), (s, w) => {
-        //refill if empty
-        //* water is poured 10 ml/sec
-        if (sec >= water / 10) {
-          expect(g.pour(s)).toBe(0)
-          sec = 0
-          water = w
+        water = g.water()
+        // if it doens't have enough water to be IDLE
+        if (water < 10) {
+          expect(g.state()).toBe(State.ON_IDLE)
+          //water is dispenseed 10 ml/sec
+          //means - 10ml
+          expect(g.dispense(1)).toBe(water)
+          //refill
           g.open()
-          g.fill(water)
+          g.fill(w)
           g.close()
           return
         }
-        //not empty
-        //s equals 0 pour should be 0
-        expect(g.pour(s) == 0).toBe(s == 0)
-        sec += s
+        //it is active
+        if (g.state() === State.ON_ACTIVE_BOIL) {
+          //after 1 sec the temp should be 25 > and < 100
+          advanceBy(1000)
+          expect(g.temperature() > 25).toBe(true)
+          expect(g.temperature() < 100).toBe(true)
+          //temp should be 100 after 60000 sec passed
+          advanceBy(59000)
+          expect(g.temperature() == 100).toBe(true)
+          //temp should be 100 after 60001 sec passed
+          advanceBy(1)
+          expect(g.temperature() == 100).toBe(true)
+        }
+        //it should be KEEP
+        expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
+        if (s > 0) {
+          expect(g.dispense(s)).not.toBe(0)
+        }
       }),
     )
+    //clear Date.now()
+    clear()
+  })
+  it('can get temperature', () => {
+    const g = new Goma1015()
+    expect(g.temperature).toBeDefined()
+    expect(g.temperature()).toBe(25)
+  })
+  it('can get water', () => {
+    const g = new Goma1015()
+    expect(g.water).toBeDefined()
+    expect(g.water()).toBe(0)
+  })
+  it('can reboil', () => {
+    const g = new Goma1015()
+    expect(g.reboil).toBeDefined()
+    //OFF
+    expect(g.state()).toBe(State.OFF)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.open()
+    //OFF_OPEN
+    expect(g.state()).toBe(State.OFF_OPEN)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.plugIn()
+    //ON_OPEN
+    expect(g.state()).toBe(State.ON_OPEN)
+    expect(g.water()).toBe(0)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.fill(9)
+    g.close()
+    //ON_IDLE
+    expect(g.state()).toBe(State.ON_IDLE)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.plugOff()
+    //OFF
+    expect(g.state()).toBe(State.OFF)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.open()
+    //OFF_OPEN
+    expect(g.state()).toBe(State.OFF_OPEN)
+    expect(g.water()).toBe(9)
+    expect(g.temperature()).toBe(25)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    g.fill(1)
+    g.close()
+    g.plugIn()
+    //ON_ACTIVE_BOIL
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.water()).toBe(10)
+    expect(g.temperature() >= 25).toBe(true)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    advanceBy(58000)
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.water()).toBe(10)
+    expect(g.temperature() < 100).toBe(true)
+    expect(() => g.reboil()).toThrowError(/should be KEEP/)
+
+    advanceBy(2000)
+    expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
+    expect(g.water()).toBe(10)
+    expect(g.temperature()).toBe(100)
+    g.reboil()
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
+    expect(g.temperature() < 100).toBe(true)
   })
 })
