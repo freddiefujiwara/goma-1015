@@ -8,36 +8,68 @@ export enum State {
 }
 
 export class Goma1015 {
-  private _isOpen: boolean
-  private _on: boolean
   private _water: number
   private _state: number
   constructor() {
-    this._isOpen = false
-    this._on = false
     this._water = 0
     this._state = State.OFF
   }
   open(): void {
-    this._isOpen = true
+    switch (this._state) {
+      case State.OFF:
+        this._state = State.OFF_OPEN
+        break
+      case State.ON_IDLE:
+        this._state = State.ON_OPEN
+        break
+      default:
+        break
+    }
   }
   close(): void {
-    this._isOpen = false
+    switch (this._state) {
+      case State.OFF_OPEN:
+        this._state = State.OFF
+        break
+      case State.ON_OPEN:
+        this._state = State.ON_IDLE
+        break
+      default:
+        break
+    }
   }
   plugIn(): void {
-    this._on = true
+    switch (this._state) {
+      case State.OFF:
+        this._state = State.ON_IDLE
+        break
+      case State.OFF_OPEN:
+        this._state = State.ON_OPEN
+        break
+      default:
+        break
+    }
   }
   plugOff(): void {
-    this._on = false
+    switch (this._state) {
+      case State.ON_IDLE:
+        this._state = State.OFF
+        break
+      case State.ON_OPEN:
+        this._state = State.OFF_OPEN
+        break
+      default:
+        break
+    }
   }
   isOpen(): boolean {
-    return this._isOpen
+    return this._state === State.OFF_OPEN || this._state === State.ON_OPEN
   }
   fill(water: number): void {
     if (water < 0) {
       throw new Error(`${this} can't be filled with negative number`)
     }
-    if (!this._isOpen) {
+    if (!this.isOpen()) {
       throw new Error(`${this} is not open`)
     }
     if (this._water + water > 1000) {
@@ -52,10 +84,10 @@ export class Goma1015 {
     if (sec < 0) {
       throw new Error(`${this} can't be dispensed with negative sec`)
     }
-    if (this._isOpen) {
+    if (this.isOpen()) {
       throw new Error(`${this} is open`)
     }
-    if (!this._on) {
+    if (this._state !== State.ON_IDLE) {
       throw new Error(`${this} plug should be inserted`)
     }
     const water = this._water
@@ -64,13 +96,5 @@ export class Goma1015 {
       this._water = 0
     }
     return water - this._water
-  }
-  reboil(): void {
-    if (this._isOpen) {
-      throw new Error(`${this} is open`)
-    }
-    if (!this._on) {
-      throw new Error(`${this} plug should be inserted`)
-    }
   }
 }

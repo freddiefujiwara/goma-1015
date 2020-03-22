@@ -54,6 +54,8 @@ describe('Goma1015', () => {
     //property based testing for fill
     g = new Goma1015()
     g.open()
+    g.plugIn()
+    g.plugOff()
     let water = 0
     fc.assert(
       fc.property(fc.nat(1000), w => {
@@ -79,10 +81,12 @@ describe('Goma1015', () => {
     //dispenseing needs to be pot closed
     g.open()
     g.plugIn()
+    g.plugIn()
     expect(() => g.dispense(15)).toThrowError(/is open/)
     g.close()
 
     //plugOff
+    g.plugOff()
     g.plugOff()
     expect(() => g.dispense(15)).toThrowError(/plug should be inserted/)
     g.plugIn()
@@ -120,23 +124,5 @@ describe('Goma1015', () => {
         sec += s
       }),
     )
-  })
-  it('can reboil', () => {
-    const g = new Goma1015()
-    //check definition
-    expect(g.reboil).toBeDefined()
-
-    //deault plugOff
-    expect(() => g.reboil()).toThrowError(/plug should be inserted/)
-    //reboiling needs to be pot closed
-    g.open()
-    g.plugIn()
-    expect(() => g.reboil()).toThrowError(/is open/)
-    g.close()
-
-    //plugOff
-    g.plugOff()
-    expect(() => g.reboil()).toThrowError(/plug should be inserted/)
-    g.plugIn()
   })
 })
