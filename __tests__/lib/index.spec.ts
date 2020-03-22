@@ -1,4 +1,5 @@
 import fc from 'fast-check'
+import { advanceBy, clear } from 'jest-date-mock'
 
 import { Goma1015, State } from '../../src/lib/index'
 
@@ -35,20 +36,21 @@ describe('Goma1015', () => {
     let g = new Goma1015()
     //check definition
     expect(g.fill).toBeDefined()
-    expect(g.full).toBeDefined()
+    expect(g.water).toBeDefined()
 
     //filling needs to be pot opened
     expect(() => g.fill(15)).toThrowError(/is not open/)
+    expect(g.water()).toBe(0)
 
     //negative water
     g.open()
     expect(() => g.fill(-1)).toThrowError(/can't be filled with negative number/)
-    expect(g.full()).toBe(false)
+    expect(g.water()).toBe(0)
 
     //if full can not be filled water anymore
     //fill water 1,000 ml
     g.fill(1000)
-    expect(g.full()).toBe(true)
+    expect(g.water()).toBe(1000)
     expect(() => g.fill(1)).toThrowError(/is full/)
 
     //property based testing for fill
@@ -65,7 +67,7 @@ describe('Goma1015', () => {
         }
         g.fill(w)
         water += w
-        expect(g.full()).toBe(1000 == water)
+        expect(g.water()).toBe(water)
       }),
     )
   })
@@ -104,32 +106,37 @@ describe('Goma1015', () => {
     g.open()
     g.fill(water)
     g.close()
-    let sec = 0
     fc.assert(
       fc.property(fc.nat(10), fc.nat(1000), (s, w) => {
-        //refill if empty
+        //refill if Sate.ON_IDLE
         //* water is dispenseed 10 ml/sec
-        if (sec >= water / 10) {
-          if (g.state() === State.ON_ACTIVE_KEEP) {
-            expect(g.dispense(s)).toBe(0)
-          }
-          sec = 0
-          water = w
+        water = g.water()
+        if (water < 10) {
+          expect(g.state()).toBe(State.ON_IDLE)
+          expect(g.dispense(1)).toBe(water)
           g.open()
-          if (!g.full()) {
-            g.fill(water)
-          }
+          g.fill(w)
           g.close()
           return
         }
         //not empty
         //water dispenseing should be 0 if s equals 0
-        if (g.state() === State.ON_ACTIVE_KEEP) {
-          expect(g.dispense(s) == 0).toBe(s == 0)
+        if (g.state() === State.ON_ACTIVE_BOIL) {
+          advanceBy(1000)
+          expect(g.temperature() > 25).toBe(true)
+          expect(g.temperature() < 100).toBe(true)
+          advanceBy(59000)
+          expect(g.temperature() == 100).toBe(true)
+          advanceBy(1)
+          expect(g.temperature() == 100).toBe(true)
         }
-        sec += s
+        expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
+        if (s > 0) {
+          expect(g.dispense(s)).not.toBe(0)
+        }
       }),
     )
+    clear()
   })
   it('can get temperature', () => {
     const g = new Goma1015()

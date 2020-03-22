@@ -8,15 +8,15 @@ export enum State {
 }
 
 export class Goma1015 {
-  private _water: number
-  private _temperature: number
   private _state: number
   private _start: number
+  private _water: number
+  private _temperature: number
   constructor() {
+    this._state = State.OFF
+    this._start = 0
     this._water = 0
     this._temperature = 25
-    this._start = 0
-    this._state = State.OFF
   }
   open(): void {
     switch (this._state) {
@@ -40,10 +40,7 @@ export class Goma1015 {
         break
       case State.ON_OPEN:
         this._state = State.ON_IDLE
-        if (this._water > 10) {
-          this._start = Date.now()
-          this._state = State.ON_ACTIVE_BOIL
-        }
+        this.state()
         break
       default:
         break
@@ -53,10 +50,7 @@ export class Goma1015 {
     switch (this._state) {
       case State.OFF:
         this._state = State.ON_IDLE
-        if (this._water > 10) {
-          this._start = Date.now()
-          this._state = State.ON_ACTIVE_BOIL
-        }
+        this.state()
         break
       case State.OFF_OPEN:
         this._state = State.ON_OPEN
@@ -81,17 +75,37 @@ export class Goma1015 {
     }
   }
   state(): number {
-    if (this._state === State.ON_ACTIVE_BOIL) {
-      this._temperature = ((Date.now() - this._start) / 1000) * 1.25
-      if (this._temperature > 100) {
-        this._temperature = 100
-        this._state = State.ON_ACTIVE_KEEP
-      }
+    switch (this._state) {
+      case State.ON_ACTIVE_BOIL:
+        this._temperature += ((Date.now() - this._start) / 1000) * 1.25
+        if (this._temperature >= 100) {
+          this._temperature = 100
+          this._state = State.ON_ACTIVE_KEEP
+        }
+        break
+      case State.ON_ACTIVE_KEEP:
+        if (this._water < 10) {
+          this._state = State.ON_IDLE
+        }
+        break
+      case State.ON_IDLE:
+        if (this._water >= 10) {
+          this._start = Date.now()
+          this._state = State.ON_ACTIVE_BOIL
+        }
+        break
+      default:
+        break
     }
     return this._state
   }
   temperature(): number {
+    this.state()
     return this._temperature
+  }
+  water(): number {
+    this.state()
+    return this._water
   }
   fill(water: number): void {
     if (water < 0) {
@@ -104,9 +118,6 @@ export class Goma1015 {
       throw new Error(`${JSON.stringify(this)} is full`)
     }
     this._water += water
-  }
-  full(): boolean {
-    return this._water >= 1000
   }
   dispense(sec: number): number {
     if (sec < 0) {
@@ -123,9 +134,7 @@ export class Goma1015 {
     if (this._water < 0) {
       this._water = 0
     }
-    if (this._state === State.ON_ACTIVE_KEEP && this._water < 10) {
-      this._state = State.ON_IDLE
-    }
+    this.state()
     return water - this._water
   }
 }
