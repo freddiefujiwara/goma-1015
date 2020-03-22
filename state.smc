@@ -1,39 +1,38 @@
 initial,
-off: _temperature = 25,
+off: _temperature=25,
 open/off,
 on {
     idle, 
-    open/on : _temperature = 25,
+    open/on : _temperature=25,
     active {
       boil  : _start  = Date.now() // only initialize phase
-              _temperature = (Date.now()-_start)/1000*1.25,
-      keep  : _temperature = 100;
+              _temperature=(Date.now()-_start)/1000*1.25,
+      keep  : _temperature=100;
     };
 
-    # _water = _water - sec * 10
+    # _water-=sec*10
     idle => idle    [color="blue"]  : dispense(sec:number);
     idle => open/on [color="red"]   : open();
     idle => boil    [color="black"] : "_water>=10";
     idle => off     [color="gray"]  : plugOff();
 
-    # _water += water
+    # _water+=water
     open/on => open/on  [color="darkgreen"] : fill(water:number) ;
     open/on => idle     [color="purple"]    : close();
     open/on => open/off [color="gray"]      : plugOff();
 
-    active => off   [color="gray"] : plugOff();
+    active => open/on [color="red"]  : open();
+    active => off     [color="gray"] : plugOff();
 
-    boil => open/on [color="red"]   : open();
     boil => keep    [color="black"] : "_temperature>=100";
 
-    # _water = _water - sec * 10
-    keep => keep    [color="blue"]   : dispense(sec:number);
-    keep => boil    [color="orange"] : reboil();
-    keep => open/on [color="red"]    : open();
-    keep => idle    [color="black"]  : "_water<10";
+    # _water-=sec*10
+    keep => keep [color="blue"]   : dispense(sec:number);
+    keep => boil [color="orange"] : reboil();
+    keep => idle [color="black"]  : "_water<10";
 };
 
-# _water = 0
+# _water=0
 initial => off;
 
 # _water += water
@@ -41,5 +40,5 @@ open/off  => open/off [color="darkgreen"] : fill(water:number);
 open/off  => off      [color="purple"]    : close();
 open/off  => open/on  [color="pink"]      : plugIn();
 
-off  => open/off [color="red"]  : open();
-off  => idle     [color="pink"] : plugIn();
+off => open/off [color="red"]  : open();
+off => idle     [color="pink"] : plugIn();

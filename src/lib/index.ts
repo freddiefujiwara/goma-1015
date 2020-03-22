@@ -11,10 +11,12 @@ export class Goma1015 {
   private _isOpen: boolean
   private _on: boolean
   private _water: number
+  private _state: number
   constructor() {
     this._isOpen = false
     this._on = false
     this._water = 0
+    this._state = State.OFF
   }
   open(): void {
     this._isOpen = true
@@ -54,7 +56,7 @@ export class Goma1015 {
       throw new Error(`${this} is open`)
     }
     if (!this._on) {
-      throw new Error(`${this} plug should be on`)
+      throw new Error(`${this} plug should be inserted`)
     }
     const water = this._water
     this._water -= 10 * sec
@@ -68,7 +70,7 @@ export class Goma1015 {
       throw new Error(`${this} is open`)
     }
     if (!this._on) {
-      throw new Error(`${this} plug should be on`)
+      throw new Error(`${this} plug should be inserted`)
     }
   }
 }

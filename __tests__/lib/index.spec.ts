@@ -1,6 +1,6 @@
 import fc from 'fast-check'
 
-import { Goma1015, State } from '../../src/lib/index'
+import { Goma1015 } from '../../src/lib/index'
 
 describe('Goma1015', () => {
   it('can create new instance', () => {
@@ -75,7 +75,7 @@ describe('Goma1015', () => {
     expect(g.plugOff).toBeDefined()
 
     //deault plugOff
-    expect(() => g.dispense(15)).toThrowError(/plug should be connected/)
+    expect(() => g.dispense(15)).toThrowError(/plug should be inserted/)
     //dispenseing needs to be pot closed
     g.open()
     g.plugIn()
@@ -84,7 +84,7 @@ describe('Goma1015', () => {
 
     //plugOff
     g.plugOff()
-    expect(() => g.dispense(15)).toThrowError(/plug should be connected/)
+    expect(() => g.dispense(15)).toThrowError(/plug should be inserted/)
     g.plugIn()
 
     //negative sec
@@ -127,7 +127,7 @@ describe('Goma1015', () => {
     expect(g.reboil).toBeDefined()
 
     //deault plugOff
-    expect(() => g.reboil()).toThrowError(/plug should be connected/)
+    expect(() => g.reboil()).toThrowError(/plug should be inserted/)
     //reboiling needs to be pot closed
     g.open()
     g.plugIn()
@@ -136,7 +136,7 @@ describe('Goma1015', () => {
 
     //plugOff
     g.plugOff()
-    expect(() => g.reboil()).toThrowError(/plug should be connected/)
+    expect(() => g.reboil()).toThrowError(/plug should be inserted/)
     g.plugIn()
   })
 })
