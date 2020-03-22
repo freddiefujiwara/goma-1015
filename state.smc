@@ -6,7 +6,7 @@ on {
     open/on : _temperature=25,
     active {
       boil  : _start  = Date.now() // only initialize phase
-              _temperature=25+((Date.now()-this._start)/1000)*1.25
+              _temperature=25+((Date.now()-_start)/1000)*1.25,
       keep  : _temperature=100;
     };
 
@@ -28,7 +28,6 @@ on {
 
     # _water-=sec*10
     keep => keep [color="blue"]   : dispense(sec:number);
-    # _temperature=90
     keep => boil [color="orange"] : reboil();
     keep => idle [color="black"]  : "_water<10";
 };
