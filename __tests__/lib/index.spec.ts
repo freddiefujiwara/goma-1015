@@ -110,19 +110,30 @@ describe('Goma1015', () => {
         //refill if empty
         //* water is dispenseed 10 ml/sec
         if (sec >= water / 10) {
-          expect(g.dispense(s)).toBe(0)
+          if (g.state() === State.ON_ACTIVE_KEEP) {
+            expect(g.dispense(s)).toBe(0)
+          }
           sec = 0
           water = w
           g.open()
-          g.fill(water)
+          if (!g.full()) {
+            g.fill(water)
+          }
           g.close()
           return
         }
         //not empty
         //water dispenseing should be 0 if s equals 0
-        expect(g.dispense(s) == 0).toBe(s == 0)
+        if (g.state() === State.ON_ACTIVE_KEEP) {
+          expect(g.dispense(s) == 0).toBe(s == 0)
+        }
         sec += s
       }),
     )
+  })
+  it('can get temperature', () => {
+    const g = new Goma1015()
+    expect(g.temperature).toBeDefined()
+    expect(g.temperature()).toBe(25)
   })
 })
