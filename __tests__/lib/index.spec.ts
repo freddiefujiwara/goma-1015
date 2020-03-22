@@ -1,6 +1,6 @@
 import fc from 'fast-check'
 
-import { Goma1015 } from '../../src/lib/index'
+import { Goma1015, State } from '../../src/lib/index'
 
 describe('Goma1015', () => {
   it('can create new instance', () => {
@@ -13,21 +13,21 @@ describe('Goma1015', () => {
     //check definition
     expect(g.open).toBeDefined()
     expect(g.close).toBeDefined()
-    expect(g.isOpen).toBeDefined()
+    expect(g.state).toBeDefined()
 
     //default is close
-    expect(g.isOpen()).toBe(false)
+    expect(g.state() === State.OFF).toBe(true)
 
     //property based testing for open/close
     fc.assert(
       fc.property(fc.boolean(), b => {
         if (b) {
           g.open()
-          expect(g.isOpen()).toBe(true)
+          expect(g.state() === State.OFF_OPEN).toBe(true)
           return
         }
         g.close()
-        expect(g.isOpen()).toBe(false)
+        expect(g.state() === State.OFF).toBe(true)
       }),
     )
   })

@@ -62,14 +62,14 @@ export class Goma1015 {
         break
     }
   }
-  isOpen(): boolean {
-    return this._state === State.OFF_OPEN || this._state === State.ON_OPEN
+  state(): number {
+    return this._state
   }
   fill(water: number): void {
     if (water < 0) {
       throw new Error(`${this} can't be filled with negative number`)
     }
-    if (!this.isOpen()) {
+    if (!(this._state === State.OFF_OPEN || this._state === State.ON_OPEN)) {
       throw new Error(`${this} is not open`)
     }
     if (this._water + water > 1000) {
@@ -84,7 +84,7 @@ export class Goma1015 {
     if (sec < 0) {
       throw new Error(`${this} can't be dispensed with negative sec`)
     }
-    if (this.isOpen()) {
+    if (this._state === State.OFF_OPEN || this._state === State.ON_OPEN) {
       throw new Error(`${this} is open`)
     }
     if (this._state !== State.ON_IDLE) {
