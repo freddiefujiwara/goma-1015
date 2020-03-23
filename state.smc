@@ -1,6 +1,6 @@
 initial,
 OFF {
-  OFF_IDLE: _temperature=25,
+  OFF_CLOSE: _temperature=25,
   OFF_OPEN;
 },
 ON {
@@ -16,15 +16,15 @@ ON {
     ON_IDLE => ON_OPEN [color="red"]   : open();
     # _star=Date.now()
     ON_IDLE => ON_ACTIVE_BOIL [color="black"] : "_water>=10";
-    ON_IDLE => OFF_IDLE       [color="gray"]  : plugOff();
+    ON_IDLE => OFF_CLOSE      [color="gray"]  : plugOff();
 
     # _water+=water
     ON_OPEN => ON_OPEN  [color="darkgreen"] : fill(water:number) ;
     ON_OPEN => ON_IDLE  [color="purple"]    : close();
     ON_OPEN => OFF_OPEN [color="gray"]      : plugOff();
 
-    ACTIVE => ON_OPEN  [color="red"]  : open();
-    ACTIVE => OFF_IDLE [color="gray"] : plugOff();
+    ACTIVE => ON_OPEN   [color="red"]  : open();
+    ACTIVE => OFF_CLOSE [color="gray"] : plugOff();
 
     ON_ACTIVE_BOIL => ON_ACTIVE_KEEP [color="black"] : "_temperature>=100";
 
@@ -36,12 +36,12 @@ ON {
 };
 
 # _water=0
-initial => OFF_IDLE;
+initial => OFF_CLOSE;
 
 # _water += water
-OFF_OPEN  => OFF_OPEN [color="darkgreen"] : fill(water:number);
-OFF_OPEN  => OFF_IDLE [color="purple"]    : close();
-OFF_OPEN  => ON_OPEN  [color="pink"]      : plugIn();
+OFF_OPEN  => OFF_OPEN  [color="darkgreen"] : fill(water:number);
+OFF_OPEN  => OFF_CLOSE [color="purple"]    : close();
+OFF_OPEN  => ON_OPEN   [color="pink"]      : plugIn();
 
-OFF_IDLE => OFF_OPEN [color="red"]  : open();
-OFF_IDLE => ON_IDLE  [color="pink"] : plugIn();
+OFF_CLOSE => OFF_OPEN [color="red"]  : open();
+OFF_CLOSE => ON_IDLE  [color="pink"] : plugIn();
