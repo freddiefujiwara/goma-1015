@@ -203,6 +203,8 @@ export class Goma1015 {
     if (sec < 0) {
       throw new Error(`${JSON.stringify(this)} can't be dispensed with negative sec`)
     }
+    // update state if it is in the IDLE state
+    this.state()
     // check state
     if (!(this._state === State.ON_IDLE || this._state === State.ON_ACTIVE_KEEP)) {
       throw new Error(`${JSON.stringify(this)} should be IDLE or KEEP`)
@@ -214,8 +216,6 @@ export class Goma1015 {
     if (this._water < 0) {
       this._water = 0
     }
-    // update state if it is in the IDLE state
-    this.state()
     // culculate dispensed water volume
     return water - this._water
   }
@@ -225,6 +225,8 @@ export class Goma1015 {
    *
    **/
   reboil(): void {
+    // update state if it is in the IDLE state
+    this.state()
     if (this._state !== State.ON_ACTIVE_KEEP) {
       throw new Error(`${JSON.stringify(this)} should be KEEP`)
     }
