@@ -19,7 +19,7 @@ describe('Goma1015', () => {
     expect(g.state).toBeDefined()
 
     //default is close
-    expect(g.state() === State.OFF).toBe(true)
+    expect(g.state() === State.OFF_CLOSE).toBe(true)
 
     //property based testing for open/close
     fc.assert(
@@ -30,7 +30,7 @@ describe('Goma1015', () => {
           return
         }
         g.close()
-        expect(g.state() === State.OFF).toBe(true)
+        expect(g.state() === State.OFF_CLOSE).toBe(true)
       }),
     )
   })
@@ -161,15 +161,15 @@ describe('Goma1015', () => {
   it('can reboil,fill,dispense,open and close for some specific states', () => {
     const g = new Goma1015()
     expect(g.reboil).toBeDefined()
-    //OFF
-    expect(g.state()).toBe(State.OFF)
+    //OFF_CLOSE
+    expect(g.state()).toBe(State.OFF_CLOSE)
     expect(g.water()).toBe(0)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
     expect(() => g.fill(10)).toThrowError(/should be OPEN/)
     expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
     g.close()
-    expect(g.state()).toBe(State.OFF)
+    expect(g.state()).toBe(State.OFF_CLOSE)
 
     g.open()
     //OFF_OPEN
@@ -203,8 +203,8 @@ describe('Goma1015', () => {
     expect(g.state()).toBe(State.ON_IDLE)
 
     g.plugOff()
-    //OFF
-    expect(g.state()).toBe(State.OFF)
+    //OFF_CLOSE
+    expect(g.state()).toBe(State.OFF_CLOSE)
     expect(g.water()).toBe(9)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)

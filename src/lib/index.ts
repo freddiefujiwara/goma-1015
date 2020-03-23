@@ -1,5 +1,5 @@
 export enum State {
-  OFF = -1,
+  OFF_CLOSE = -1,
   OFF_OPEN,
   ON_IDLE,
   ON_OPEN,
@@ -22,7 +22,7 @@ export class Goma1015 {
    *
    **/
   constructor() {
-    this._state = State.OFF
+    this._state = State.OFF_CLOSE
     this._start = 0
     this._water = 0
     this._temperature = 25
@@ -35,8 +35,8 @@ export class Goma1015 {
    **/
   open(): void {
     switch (this._state) {
-      // OFF - open() -> OFF_OPEN
-      case State.OFF:
+      // OFF_CLOSE - open() -> OFF_OPEN
+      case State.OFF_CLOSE:
         this._state = State.OFF_OPEN
         break
       // IDLE,BOIL and KEEP - open() -> ON_OPEN
@@ -58,9 +58,9 @@ export class Goma1015 {
    **/
   close(): void {
     switch (this._state) {
-      // OFF_OPEN - open() -> OFF
+      // OFF_OPEN - open() -> OFF_CLOSE
       case State.OFF_OPEN:
-        this._state = State.OFF
+        this._state = State.OFF_CLOSE
         break
       // ON_OPEN - open() -> IDLE
       case State.ON_OPEN:
@@ -79,8 +79,8 @@ export class Goma1015 {
    **/
   plugIn(): void {
     switch (this._state) {
-      // OFF - plugIn() -> IDLE
-      case State.OFF:
+      // OFF_CLOSE - plugIn() -> IDLE
+      case State.OFF_CLOSE:
         this._state = State.ON_IDLE
         this.state()
         break
@@ -100,11 +100,11 @@ export class Goma1015 {
    **/
   plugOff(): void {
     switch (this._state) {
-      // IDLE,BOIL and KEEP - plugOff() -> OFF
+      // IDLE,BOIL and KEEP - plugOff() -> OFF_CLOSE
       case State.ON_IDLE:
       case State.ON_ACTIVE_BOIL:
       case State.ON_ACTIVE_KEEP:
-        this._state = State.OFF
+        this._state = State.OFF_CLOSE
         this._temperature = 25
         break
       // ON_OPEN - plugOff() -> OFF_OPEN
