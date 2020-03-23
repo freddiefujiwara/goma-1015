@@ -13,8 +13,8 @@ ON {
     ON_IDLE => ON_IDLE [color="blue"]  : dispense(sec:number);
     ON_IDLE => ON_OPEN [color="red"]   : open();
     # _star=Date.now()
-    ON_IDLE => OPEN_ACTIVE_BOIL [color="black"] : "_water>=10";
-    ON_IDLE => OFF              [color="gray"]  : plugOff();
+    ON_IDLE => ON_ACTIVE_BOIL [color="black"] : "_water>=10";
+    ON_IDLE => OFF            [color="gray"]  : plugOff();
 
     # _water+=water
     ON_OPEN => ON_OPEN  [color="darkgreen"] : fill(water:number) ;
