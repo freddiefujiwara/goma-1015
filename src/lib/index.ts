@@ -112,7 +112,7 @@ export class Goma1015 {
       throw new Error(`${JSON.stringify(this)} can't be filled with negative number`)
     }
     if (!(this._state === State.OFF_OPEN || this._state === State.ON_OPEN)) {
-      throw new Error(`${JSON.stringify(this)} is not open`)
+      throw new Error(`${JSON.stringify(this)} should be OPEN`)
     }
     if (this._water + water > 1000) {
       throw new Error(`${JSON.stringify(this)} is full`)

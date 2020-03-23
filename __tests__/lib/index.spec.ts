@@ -41,7 +41,7 @@ describe('Goma1015', () => {
     expect(g.water).toBeDefined()
 
     //filling needs to be pot opened
-    expect(() => g.fill(15)).toThrowError(/is not open/)
+    expect(() => g.fill(15)).toThrowError(/should be OPEN/)
     expect(g.water()).toBe(0)
 
     //negative water
@@ -158,7 +158,7 @@ describe('Goma1015', () => {
     expect(g.water).toBeDefined()
     expect(g.water()).toBe(0)
   })
-  it('can reboil', () => {
+  it('can reboil,fill,dispense,open and close for some specific states', () => {
     const g = new Goma1015()
     expect(g.reboil).toBeDefined()
     //OFF
@@ -166,6 +166,10 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(0)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.fill(10)).toThrowError(/should be OPEN/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
+    g.close()
+    expect(g.state()).toBe(State.OFF)
 
     g.open()
     //OFF_OPEN
@@ -173,6 +177,9 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(0)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
+    g.open()
+    expect(g.state()).toBe(State.OFF_OPEN)
 
     g.plugIn()
     //ON_OPEN
@@ -180,6 +187,9 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(0)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
+    g.open()
+    expect(g.state()).toBe(State.ON_OPEN)
 
     g.fill(9)
     g.close()
@@ -188,6 +198,9 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(9)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.fill(10)).toThrowError(/should be OPEN/)
+    g.close()
+    expect(g.state()).toBe(State.ON_IDLE)
 
     g.plugOff()
     //OFF
@@ -195,6 +208,8 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(9)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.fill(10)).toThrowError(/should be OPEN/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
 
     g.open()
     //OFF_OPEN
@@ -202,6 +217,7 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(9)
     expect(g.temperature()).toBe(25)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
 
     g.fill(1)
     g.close()
@@ -211,6 +227,10 @@ describe('Goma1015', () => {
     expect(g.water()).toBe(10)
     expect(g.temperature() >= 25).toBe(true)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
+    expect(() => g.fill(10)).toThrowError(/should be OPEN/)
+    expect(() => g.dispense(15)).toThrowError(/should be IDLE or KEEP/)
+    g.close()
+    expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
 
     advanceBy(58000)
     expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
@@ -218,13 +238,22 @@ describe('Goma1015', () => {
     expect(g.temperature() < 100).toBe(true)
     expect(() => g.reboil()).toThrowError(/should be KEEP/)
 
+    //ON_ACTIVE_KEEP
     advanceBy(2000)
     expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
     expect(g.water()).toBe(10)
     expect(g.temperature()).toBe(100)
+    expect(() => g.fill(10)).toThrowError(/should be OPEN/)
+    g.close()
+    expect(g.state()).toBe(State.ON_ACTIVE_KEEP)
+
     g.reboil()
+    //ON_ACTIVE_BOIL
     expect(g.state()).toBe(State.ON_ACTIVE_BOIL)
     expect(g.temperature() < 100).toBe(true)
+
+    //clear Date.now()
+    clear()
   })
   /*
   it('should detect potential issues with the Goma1015', () =>
