@@ -2,7 +2,7 @@ initial,
 OFF: _temperature=25,
 OFF_OPEN,
 ON {
-    ON_ON_IDLE, 
+    ON_IDLE, 
     ON_OPEN : _temperature=25,
     ACTIVE {
       ON_ACTIVE_BOIL : _temperature=25+((Date.now()-_start)/1000)*1.25,
