@@ -35,9 +35,11 @@ export class Goma1015 {
    **/
   open(): void {
     switch (this._state) {
+      // OFF - open() -> OFF_OPEN
       case State.OFF:
         this._state = State.OFF_OPEN
         break
+      // IDLE,BOIL and KEEP - open() -> ON_OPEN
       case State.ON_IDLE:
       case State.ON_ACTIVE_BOIL:
       case State.ON_ACTIVE_KEEP:
@@ -56,9 +58,11 @@ export class Goma1015 {
    **/
   close(): void {
     switch (this._state) {
+      // OFF_OPEN - open() -> OFF
       case State.OFF_OPEN:
         this._state = State.OFF
         break
+      // ON_OPEN - open() -> IDLE
       case State.ON_OPEN:
         this._state = State.ON_IDLE
         this.state()
@@ -75,10 +79,12 @@ export class Goma1015 {
    **/
   plugIn(): void {
     switch (this._state) {
+      // OFF - plugIn() -> IDLE
       case State.OFF:
         this._state = State.ON_IDLE
         this.state()
         break
+      // OFF_OPEN - plugIn() -> ON_OPEN
       case State.OFF_OPEN:
         this._state = State.ON_OPEN
         break
@@ -94,12 +100,14 @@ export class Goma1015 {
    **/
   plugOff(): void {
     switch (this._state) {
+      // IDLE,BOIL and KEEP - plugOff() -> OFF
       case State.ON_IDLE:
       case State.ON_ACTIVE_BOIL:
       case State.ON_ACTIVE_KEEP:
         this._state = State.OFF
         this._temperature = 25
         break
+      // ON_OPEN - plugOff() -> OFF_OPEN
       case State.ON_OPEN:
         this._state = State.OFF_OPEN
         break
@@ -109,7 +117,7 @@ export class Goma1015 {
   }
   /**
    * check the current state
-   *
+   * (* update the state if something update during BOIL/KEEP/IDLE)
    * @return state id:number
    *
    **/
@@ -148,6 +156,7 @@ export class Goma1015 {
    *
    **/
   temperature(): number {
+    //update the state
     this.state()
     return this._temperature
   }
@@ -158,6 +167,7 @@ export class Goma1015 {
    *
    **/
   water(): number {
+    //update the state
     this.state()
     return this._water
   }
@@ -172,9 +182,11 @@ export class Goma1015 {
     if (water < 0) {
       throw new Error(`${JSON.stringify(this)} can't be filled with negative number`)
     }
+    // check state
     if (!(this._state === State.OFF_OPEN || this._state === State.ON_OPEN)) {
       throw new Error(`${JSON.stringify(this)} should be OPEN`)
     }
+    // check will be overflowed or not
     if (this._water + water > 1000) {
       throw new Error(`${JSON.stringify(this)} is full`)
     }
@@ -191,15 +203,20 @@ export class Goma1015 {
     if (sec < 0) {
       throw new Error(`${JSON.stringify(this)} can't be dispensed with negative sec`)
     }
+    // check state
     if (!(this._state === State.ON_IDLE || this._state === State.ON_ACTIVE_KEEP)) {
       throw new Error(`${JSON.stringify(this)} should be IDLE or KEEP`)
     }
+    // remember before water volume
     const water = this._water
     this._water -= 10 * sec
+    // convert to unsigned integer
     if (this._water < 0) {
       this._water = 0
     }
+    // update state if it is in the IDLE state
     this.state()
+    // culculate dispensed water volume
     return water - this._water
   }
   /**
@@ -211,6 +228,7 @@ export class Goma1015 {
     if (this._state !== State.ON_ACTIVE_KEEP) {
       throw new Error(`${JSON.stringify(this)} should be KEEP`)
     }
+    // force move to be BOIL state
     this._start = Date.now()
     this._state = State.ON_ACTIVE_BOIL
   }
