@@ -1,4 +1,4 @@
-import { advanceBy, clear } from 'jest-date-mock'
+import { advanceBy } from 'jest-date-mock'
 
 import { Goma1015, State } from '../src/lib/index'
 import { Goma1015Command, Goma1015Model } from './Goma1015Model'
@@ -6,14 +6,16 @@ import { Goma1015Command, Goma1015Model } from './Goma1015Model'
 /** Class CloseCommand */
 export class CloseCommand implements Goma1015Command {
   /** to manage state transition */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -25,6 +27,7 @@ export class CloseCommand implements Goma1015Command {
     //confirm p.state() == m.state
     const stateBefore = p.state()
     expect(stateBefore).toBe(m.state)
+    m.temperature = p.temperature()
     // the action
     p.close()
     if (m.state === State.OFF_OPEN) {
@@ -36,13 +39,13 @@ export class CloseCommand implements Goma1015Command {
     if (p.state() === State.ON_ACTIVE_BOIL) {
       advanceBy(1000)
       expect(p.temperature() > m.temperature).toBe(true)
-      clear()
     } else {
       expect(p.temperature()).toBe(m.temperature)
     }
     m.state = p.state()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> open()`
+    return `${this.before} -> close() -> ${this.after}`
   }
 }

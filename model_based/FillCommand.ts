@@ -6,14 +6,16 @@ export class FillCommand implements Goma1015Command {
   /** to manage fill water volume */
   private fill: number
   /** to manage state */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -42,8 +44,9 @@ export class FillCommand implements Goma1015Command {
     }
     m.state = p.state()
     m.water = p.water()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> fill(${this.fill})`
+    return `${this.before} -> fill(${this.fill}) -> ${this.after}`
   }
 }

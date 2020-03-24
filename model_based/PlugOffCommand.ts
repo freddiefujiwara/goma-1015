@@ -4,14 +4,16 @@ import { Goma1015Command, Goma1015Model } from './Goma1015Model'
 /** Class PlugOffCommand */
 export class PlugOffCommand implements Goma1015Command {
   /** to manage state */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -40,8 +42,9 @@ export class PlugOffCommand implements Goma1015Command {
     //the temperature should be 25
     expect(p.temperature()).toBe(25)
     m.state = p.state()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> plugOff()`
+    return `${this.before} -> plugOff() -> ${this.after}`
   }
 }
