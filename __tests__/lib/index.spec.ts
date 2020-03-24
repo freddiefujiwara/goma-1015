@@ -1,9 +1,9 @@
 import fc from 'fast-check'
 import { advanceBy, clear } from 'jest-date-mock'
 
+import { Goma1015Commands } from '../../model_based/Goma1015Commands'
+import { Goma1015Model } from '../../model_based/Goma1015Model'
 import { Goma1015, State } from '../../src/lib/index'
-//import { Goma1015Model }    from '../../model_based/Goma1015Model';
-//import { Goma1015Commands } from '../../model_based/Goma1015Commands';
 
 describe('Goma1015', () => {
   it('can create new instance', () => {
@@ -255,7 +255,6 @@ describe('Goma1015', () => {
     //clear Date.now()
     clear()
   })
-  /*
   it('should detect potential issues with the Goma1015', () =>
     fc.assert(
       fc.property(Goma1015Commands, commands => {
@@ -264,5 +263,4 @@ describe('Goma1015', () => {
         fc.modelRun(() => ({ model, real }), commands)
       }),
     ))
-   */
 })
