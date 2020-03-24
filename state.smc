@@ -1,44 +1,47 @@
 initial,
-off: _temperature=25,
-open/off,
-on {
-    idle, 
-    open/on : _temperature=25,
-    active {
-      boil  : _start  = Date.now() // only initialize phase
-              _temperature=25+((Date.now()-_start)/1000)*1.25,
-      keep  : _temperature=100;
+OFF {
+  OFF_CLOSE: _temperature=25,
+  OFF_OPEN;
+},
+ON {
+    ON_IDLE, 
+    ON_OPEN : _temperature=25,
+    ACTIVE {
+      ON_ACTIVE_BOIL : _temperature=25+((Date.now()-_start)/1000)*1.25,
+      ON_ACTIVE_KEEP : _temperature=100;
     };
 
     # _water-=sec*10
-    idle => idle    [color="blue"]  : dispense(sec:number);
-    idle => open/on [color="red"]   : open();
-    idle => boil    [color="black"] : "_water>=10";
-    idle => off     [color="gray"]  : plugOff();
+    ON_IDLE => ON_IDLE [color="blue"]  : dispense(sec:number);
+    ON_IDLE => ON_OPEN [color="red"]   : open();
+    # _start=Date.now()
+    ON_IDLE => ON_ACTIVE_BOIL [color="black"] : "_water>=10";
+    ON_IDLE => OFF_CLOSE      [color="gray"]  : plugOff();
 
     # _water+=water
-    open/on => open/on  [color="darkgreen"] : fill(water:number) ;
-    open/on => idle     [color="purple"]    : close();
-    open/on => open/off [color="gray"]      : plugOff();
+    ON_OPEN => ON_OPEN  [color="darkgreen"] : fill(water:number) ;
+    ON_OPEN => ON_IDLE  [color="purple"]    : close();
+    ON_OPEN => OFF_OPEN [color="gray"]      : plugOff();
 
-    active => open/on [color="red"]  : open();
-    active => off     [color="gray"] : plugOff();
+    ACTIVE => ON_OPEN   [color="red"]  : open();
+    ACTIVE => OFF_CLOSE [color="gray"] : plugOff();
 
-    boil => keep    [color="black"] : "_temperature>=100";
+    ON_ACTIVE_BOIL => ON_ACTIVE_KEEP [color="black"] : "_temperature>=100";
 
     # _water-=sec*10
-    keep => keep [color="blue"]   : dispense(sec:number);
-    keep => boil [color="orange"] : reboil();
-    keep => idle [color="black"]  : "_water<10";
+    ON_ACTIVE_KEEP => ON_ACTIVE_KEEP [color="blue"]   : dispense(sec:number);
+    # _start=Date.now()
+    ON_ACTIVE_KEEP => ON_ACTIVE_BOIL [color="orange"] : reboil();
+    ON_ACTIVE_KEEP => ON_IDLE        [color="black"]  : "_water<10";
 };
 
 # _water=0
-initial => off;
+initial => OFF_CLOSE;
 
 # _water += water
-open/off  => open/off [color="darkgreen"] : fill(water:number);
-open/off  => off      [color="purple"]    : close();
-open/off  => open/on  [color="pink"]      : plugIn();
+OFF_OPEN  => OFF_OPEN  [color="darkgreen"] : fill(water:number);
+OFF_OPEN  => OFF_CLOSE [color="purple"]    : close();
+OFF_OPEN  => ON_OPEN   [color="pink"]      : plugIn();
 
-off => open/off [color="red"]  : open();
-off => idle     [color="pink"] : plugIn();
+OFF_CLOSE => OFF_OPEN [color="red"]  : open();
+OFF_CLOSE => ON_IDLE  [color="pink"] : plugIn();
