@@ -25,7 +25,8 @@ export class FillCommand implements Goma1015Command {
     //confirm p.state() == m.state
     expect(p.state()).toBe(m.state)
     const beforeWater = p.water()
-    this.fill = 5
+    //vouldary value 9,10 and 11
+    this.fill = 10 //Math.floor(Math.random() * 3) + 9
     // not overflowed and OFF_OPEN or ON_OPEN
     if (m.state === State.OFF_OPEN && this.fill + beforeWater <= 1000) {
       //can fill

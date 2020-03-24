@@ -26,7 +26,8 @@ export class DispenseCommand implements Goma1015Command {
     expect(p.state()).toBe(m.state)
     const beforeWater = p.water()
 
-    this.dispense = 5
+    //vouldary value 9,10 and 11
+    this.dispense = 10 //Math.floor(Math.random() * 3) + 9
     // it can dispense under State.ON_IDLE
     if (m.state === State.ON_IDLE) {
       p.dispense(this.dispense)
