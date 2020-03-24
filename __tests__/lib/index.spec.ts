@@ -263,4 +263,6 @@ describe('Goma1015', () => {
         fc.modelRun(() => ({ model, real }), commands)
       }),
     ))
+  //clear Date.now()
+  clear()
 })

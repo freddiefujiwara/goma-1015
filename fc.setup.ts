@@ -1,5 +1,5 @@
 import fc from 'fast-check'
 fc.configureGlobal({
-  numRuns: 1000,
-  verbose: 2,
+  numRuns: 90000,
+  verbose: true,
 })

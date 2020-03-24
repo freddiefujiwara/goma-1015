@@ -4,14 +4,16 @@ import { Goma1015Command, Goma1015Model } from './Goma1015Model'
 /** Class OpenCommand */
 export class OpenCommand implements Goma1015Command {
   /** to manage state */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -39,8 +41,9 @@ export class OpenCommand implements Goma1015Command {
     //automatically temperature should be 25
     expect(p.temperature()).toBe(25)
     m.state = p.state()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> open()`
+    return `${this.before} -> open() -> ${this.after}`
   }
 }

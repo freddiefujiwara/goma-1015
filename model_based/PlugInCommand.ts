@@ -1,4 +1,4 @@
-import { advanceBy, clear } from 'jest-date-mock'
+import { advanceBy } from 'jest-date-mock'
 
 import { Goma1015, State } from '../src/lib/index'
 import { Goma1015Command, Goma1015Model } from './Goma1015Model'
@@ -6,14 +6,16 @@ import { Goma1015Command, Goma1015Model } from './Goma1015Model'
 /** Class PlugInCommand */
 export class PlugInCommand implements Goma1015Command {
   /** to manage state */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -24,6 +26,7 @@ export class PlugInCommand implements Goma1015Command {
   run(m: Goma1015Model, p: Goma1015) {
     //confirm p.state() == m.state
     expect(p.state()).toBe(m.state)
+    m.temperature = p.temperature()
     //the action
     p.plugIn()
     //OFF_OPEN/OFF_CLOSE -> plugIn()
@@ -42,15 +45,14 @@ export class PlugInCommand implements Goma1015Command {
       advanceBy(1000)
       //the temperature should be warmed a bit
       expect(p.temperature() > m.temperature).toBe(true)
-      //clear Date.now()
-      clear()
     } else {
       //otherwise the temperature must not be changed
       expect(p.temperature()).toBe(m.temperature)
     }
     m.state = p.state()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> plugIn()`
+    return `${this.before} -> plugIn() -> ${this.after}`
   }
 }

@@ -1,10 +1,10 @@
 export enum State {
   OFF_CLOSE = -1,
-  OFF_OPEN,
-  ON_IDLE,
-  ON_OPEN,
-  ON_ACTIVE_BOIL,
-  ON_ACTIVE_KEEP,
+  OFF_OPEN, //0
+  ON_IDLE, //1
+  ON_OPEN, //2
+  ON_ACTIVE_BOIL, //3
+  ON_ACTIVE_KEEP, //4
 }
 /** Class GOMA-1015 http://www.sessame.jp/workinggroup/WorkingGroup2/POT_Specification.htm */
 export class Goma1015 {

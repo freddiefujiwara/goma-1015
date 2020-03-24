@@ -6,14 +6,16 @@ export class DispenseCommand implements Goma1015Command {
   /** to manage dispense water volume */
   private dispense: number
   /** to manage state transition */
-  private state: number
+  private before: number
+  private after: number
   /**
    * check
    * it runs under any states
    * @param m:Goma1015Model
    */
   check(m: Goma1015Model) {
-    this.state = m.state
+    this.before = m.state
+    this.after = m.state
     return true
   }
   /**
@@ -46,8 +48,9 @@ export class DispenseCommand implements Goma1015Command {
     }
     m.state = p.state()
     m.water = p.water()
+    this.after = m.state
   }
   toString() {
-    return `${this.state} -> dispense(${this.dispense})`
+    return `${this.before} -> dispense(${this.dispense}) -> ${this.after}`
   }
 }
