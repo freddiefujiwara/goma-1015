@@ -53,7 +53,7 @@ and also it has the following 6 actions
 # Create a model
 
 Model, in fast-check the action is defined in the form of a Command
-also you can see test target on the source code[Goma1015](https://raw.githubusercontent.com/freddiefujiwara/goma-1015/master/src/lib/index.ts),
+also you can see test target on the source code [Goma1015](https://raw.githubusercontent.com/freddiefujiwara/goma-1015/master/src/lib/index.ts),
 so Let's try to use public field state,water and temperature, and
 Initialize it in constructor as in Goma1015.
 
@@ -80,7 +80,7 @@ export class Goma1015Model {
 export type Goma1015Command = fc.Command<Goma1015Model, Goma1015>
 ```
 
-# Create an action
+# Create actions
 
 I want to find the unknown problem, so we leave each action executable in all states
 and will compare the state of each model with the actual instance.
@@ -163,6 +163,6 @@ I've made 10,000 state transitions and they've all passed!
 The actual Goma1015 has more functionality like a timer, multiple heat retention functions, and more, so the condition is more complicated.
 This repository created as bottom-up style as much as possible, step by step.
 I would like to create UI for that as an other repository.
-Anyway I'm sohappy to try out the model-based testing with fast-check.
+Anyway I'm so happy to try out the model-based testing with fast-check.
 and any pull requests are welcomed.
 That's all
