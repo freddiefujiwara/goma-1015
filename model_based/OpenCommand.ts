@@ -28,11 +28,12 @@ export class OpenCommand implements Goma1015Command {
     // the action
     const stateBefore = p.state()
     p.open()
-    //if OFF_CLOSE/ON_IDLE -> open()
-    if (m.state === State.OFF_CLOSE) {
+    //if OFF_CLOSE/OFF_OPEN -> open()
+    if (m.state === State.OFF_CLOSE || m.state === State.OFF_OPEN) {
       //the state should be State.OFF_OPEN
       expect(p.state()).toBe(State.OFF_OPEN)
-    } else if (m.state === State.ON_IDLE) {
+      //other states
+    } else {
       //the state should be State.ON_OPEN
       expect(p.state()).toBe(State.ON_OPEN)
     }

@@ -44,7 +44,7 @@ export class DispenseCommand implements Goma1015Command {
       }
     } else {
       // dispense only allowed under State.ON_IDLE or State.ON_ACTIVE_KEEP
-      expect(() => dispense(this.dispense)).toThrowError()
+      expect(() => p.dispense(this.dispense)).toThrowError()
     }
     m.state = p.state()
     m.water = p.water()
