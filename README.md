@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/freddiefujiwara/goma-1015/workflows/Node.js%20CI/badge.svg)
+
 # What is this
 
 This is an example for Property based testing using [fast-check](https://github.com/dubzzz/fast-check).
