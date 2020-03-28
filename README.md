@@ -1,15 +1,15 @@
-#What is this
+# What is this
 This is an example for Property based testing using [fast-check](https://github.com/dubzzz/fast-check).
 This test target is inspired from [test design contest U-30 class](http://aster.or.jp/business/contest/rulebooku30.html), which is specified as a test base
 It is decided to be [Topic Boiling Pot Requirement Specification (GOMA-1015), 7th Edition](http://www.sessame.jp/workinggroup/WorkingGroup2/POT_Specification.htm).
 Fast-check has [Model based testing](https://www.guru99.com/model-based-testing-tutorial.html) method to find test cases that fail by randomly walking the state, so I would like to try it on the repositly.
 
-#What is Model based testing?
+# What is Model based testing?
 Model based testing is the following flow.
 1. Define the behavior that the test target will behave and its state in a model.
 2. Compare the behavior under test target with the results predicted by the model to confirm.
 
-#Model based testing for fast-check
+# Model based testing for fast-check
 [Model Based Testing Tutorial: What is, Tools & Example] (https://www.guru99.com/model-based-testing-tutorial.html) explains it has many different types of models
 
 - Data flow
@@ -20,7 +20,7 @@ Model based testing is the following flow.
 
 In this repository, I'll try using fast-check to test state transition machines.
 
-#State transition diagram
+# State transition diagram
 Let's look at the state transition diagram 
 ![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/373dba8d-4b24-707e-478e-a3a71ab61716.png)
 
@@ -46,7 +46,7 @@ and also it has the following 6 actions
 - Boil to keep boiling.
 
 
-#Create a model
+# Create a model
 Model, in fast-check the action is defined in the form of a Command
 also you can see test target on the source code[Goma1015](https://raw.githubusercontent.com/freddiefujiwara/goma-1015/master/src/lib/index.ts), 
 so Let's try to use  public field  state,water and temperature, and
@@ -75,7 +75,7 @@ export class Goma1015Model {
 export type Goma1015Command = fc.Command<Goma1015Model, Goma1015>
 ``''
 
-#Create an action
+# Create an action
 I want to find the unknown problem, so we leave each action executable in all states
 and will compare the state of each model with the actual instance.
 
@@ -131,7 +131,7 @@ Test View point
 
 [Source](https://raw.githubusercontent.com/freddiefujiwara/goma-1015/feature/model-based/model_based/BoilToKeepCommand.ts)
 
-#Launch
+# Launch
 You can see the actual state transition like this.
 ! [image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/e14bacd8-11dd-124a-6b9d-dd39876a4345.png)
 
@@ -141,7 +141,7 @@ I've made 10,000 state transitions and they've all passed!
 ! [image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/4668dd3f-2f0b-7398-9725-07f381a9d6ff.png)
 
 
-#Conclusion.
+# Conclusion.
 The actual Goma1015 has more functionality like a timer, multiple heat retention functions, and more, so the condition is more complicated.
 This repository created as bottom-up style as much as possible, step by step.
 I would like to create UI for that as an other repository.
