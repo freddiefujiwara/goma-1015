@@ -133,12 +133,12 @@ Test View point
 
 # Launch
 You can see the actual state transition like this.
-! [image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/e14bacd8-11dd-124a-6b9d-dd39876a4345.png)
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/e14bacd8-11dd-124a-6b9d-dd39876a4345.png)
 
 fast-check is testing a lot of different conditions.
 
 I've made 10,000 state transitions and they've all passed!
-! [image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/4668dd3f-2f0b-7398-9725-07f381a9d6ff.png)
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1817/4668dd3f-2f0b-7398-9725-07f381a9d6ff.png)
 
 
 # Conclusion.
