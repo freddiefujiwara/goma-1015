@@ -27,14 +27,14 @@ Let's look at the state transition diagram
 It seems complicated, but the point is that 
 it has the following 6 states
 
-``JavaScript
+```JavaScript
 OFF_CLOSE = -1,
 OFF_OPEN, //0
 ON_IDLE, //1
 ON_OPEN, //2
 ON_ACTIVE_BOIL, //3
 ON_ACTIVE_KEEP, //4
-``''
+```
 
 and also it has the following 6 actions
 
@@ -52,7 +52,7 @@ also you can see test target on the source code[Goma1015](https://raw.githubuser
 so Let's try to use  public field  state,water and temperature, and
 Initialize it in constructor as in Goma1015.
 
-``JavaScript
+```JavaScript
 import fc from 'fast-check'
 
 import { Goma1015, State } from '.../src/lib/index' /src/lib/index'
@@ -73,7 +73,7 @@ export class Goma1015Model {
 }
 
 export type Goma1015Command = fc.Command<Goma1015Model, Goma1015>
-``''
+```
 
 # Create an action
 I want to find the unknown problem, so we leave each action executable in all states
