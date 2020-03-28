@@ -32,7 +32,7 @@ Let's look at the state transition diagram
 It seems complicated, but the point is that
 it has the following 6 states
 
-```JavaScript
+```TypeScript
 OFF_CLOSE = -1,
 OFF_OPEN, //0
 ON_IDLE, //1
@@ -57,7 +57,7 @@ also you can see test target on the source code [Goma1015](https://raw.githubuse
 so Let's try to use public field state,water and temperature, and
 Initialize it in constructor as in Goma1015.
 
-```JavaScript
+```TypeScript
 import fc from 'fast-check'
 
 import { Goma1015, State } from '.../src/lib/index' /src/lib/index'
