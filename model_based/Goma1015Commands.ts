@@ -7,6 +7,7 @@ import { FillCommand } from './FillCommand'
 import { OpenCommand } from './OpenCommand'
 import { PlugInCommand } from './PlugInCommand'
 import { PlugOffCommand } from './PlugOffCommand'
+import { ReboilCommand } from './ReboilCommand'
 
 /** install all commands */
 export const Goma1015Commands = fc.commands([
@@ -17,4 +18,5 @@ export const Goma1015Commands = fc.commands([
   fc.constant(new FillCommand()),
   fc.constant(new DispenseCommand()),
   fc.constant(new BoilToKeepCommand()),
+  fc.constant(new ReboilCommand()),
 ])

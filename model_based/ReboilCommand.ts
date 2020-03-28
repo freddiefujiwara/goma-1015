@@ -1,10 +1,8 @@
 import { Goma1015, State } from '../src/lib/index'
 import { Goma1015Command, Goma1015Model } from './Goma1015Model'
 
-/** Class FillCommand */
-export class FillCommand implements Goma1015Command {
-  /** to manage fill water volume */
-  private fill: number
+/** Class ReboilCommand */
+export class ReboilCommand implements Goma1015Command {
   /** to manage state */
   private before: number
   private after: number
@@ -26,27 +24,20 @@ export class FillCommand implements Goma1015Command {
   run(m: Goma1015Model, p: Goma1015) {
     //confirm p.state() == m.state
     expect(p.state()).toBe(m.state)
-    const beforeWater = p.water()
-    //vouldary value 9,10 and 11
-    this.fill = 10 //Math.floor(Math.random() * 3) + 9
     // not overflowed and OFF_OPEN or ON_OPEN
-    if (m.state === State.OFF_OPEN && this.fill + beforeWater <= 1000) {
-      //can fill
-      p.fill(this.fill)
-      expect(p.water()).toBe(beforeWater + this.fill)
-    } else if (m.state === State.ON_OPEN && this.fill + beforeWater <= 1000) {
-      //can fill
-      p.fill(this.fill)
-      expect(p.water()).toBe(beforeWater + this.fill)
+    if (m.state === State.ON_ACTIVE_KEEP) {
+      p.reboil()
+      expect(p.state()).toBe(State.ON_ACTIVE_BOIL)
     } else {
       // overflowed or not allowed states
-      expect(() => p.fill(this.fill)).toThrowError()
+      expect(() => p.reboil()).toThrowError()
     }
+    expect(p.water()).toBe(m.water)
     m.state = p.state()
     m.water = p.water()
     this.after = m.state
   }
   toString() {
-    return `${this.before} -> fill(${this.fill}) -> ${this.after}`
+    return `${this.before} -> reboil() -> ${this.after}`
   }
 }
