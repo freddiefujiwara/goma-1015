@@ -10,7 +10,7 @@ Model based testing is the following flow.
 2. Compare the behavior under test target with the results predicted by the model to confirm.
 
 # Model based testing for fast-check
-[Model Based Testing Tutorial: What is, Tools & Example] (https://www.guru99.com/model-based-testing-tutorial.html) explains it has many different types of models
+[Model Based Testing Tutorial: What is, Tools & Example](https://www.guru99.com/model-based-testing-tutorial.html) explains it has many different types of models
 
 - Data flow
 - Control flow
