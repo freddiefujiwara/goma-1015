@@ -1,4 +1,6 @@
 ![Node.js CI](https://github.com/freddiefujiwara/goma-1015/workflows/Node.js%20CI/badge.svg)
+![NPM](https://img.shields.io/npm/l/goma-1015)
+![npm](https://img.shields.io/npm/v/goma-1015)
 
 # What is this
 
